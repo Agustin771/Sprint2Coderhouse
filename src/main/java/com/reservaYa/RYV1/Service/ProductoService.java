@@ -1,9 +1,14 @@
 package com.reservaYa.RYV1.Service;
 
+import com.reservaYa.RYV1.Model.Categoria;
 import com.reservaYa.RYV1.Model.Producto;
+import com.reservaYa.RYV1.Repository.CategoriaRepository;
 import com.reservaYa.RYV1.Repository.ProductRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +17,13 @@ import java.util.Optional;
 public class ProductoService {
 
     private final ProductRepository productRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public ProductoService(ProductRepository productRepository) {
+    public ProductoService(
+            ProductRepository productRepository,
+            CategoriaRepository categoriaRepository) {
         this.productRepository = productRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -27,11 +36,45 @@ public class ProductoService {
         return productRepository.findById(id);
     }
 
+    private Categoria resolverCategoria(Categoria categoria) {
+        if (categoria == null) {
+            return null;
+        }
+
+        if (categoria.getId() != null) {
+            return categoriaRepository.findById(categoria.getId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "La categoría indicada no existe"
+                    ));
+        }
+
+        if (categoria.getNombre() != null
+                && !categoria.getNombre().isBlank()) {
+
+            String nombre = categoria.getNombre().trim();
+
+            return categoriaRepository.findByNombreIgnoreCase(nombre)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "La categoría indicada no existe"
+                    ));
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Debés indicar una categoría válida"
+        );
+    }
+
     @Transactional
     public Producto crear(Producto producto) {
         producto.setId(null);
 
-        // Si hay varias imágenes, la primera será la principal.
+        producto.setCategoria(
+                resolverCategoria(producto.getCategoria())
+        );
+
         if (producto.getImages() != null
                 && !producto.getImages().isEmpty()) {
             producto.setImagen(producto.getImages().get(0));
@@ -45,16 +88,16 @@ public class ProductoService {
         return productRepository.findById(id)
                 .map(producto -> {
                     producto.setNombre(datos.getNombre());
-                    producto.setCategoria(datos.getCategoria());
+
+                    producto.setCategoria(
+                            resolverCategoria(datos.getCategoria())
+                    );
+
                     producto.setUbicacion(datos.getUbicacion());
                     producto.setPrecio(datos.getPrecio());
                     producto.setDescripcion(datos.getDescripcion());
                     producto.setImages(datos.getImages());
 
-                    // Actualizar la galería completa.
-                    producto.setImages(datos.getImages());
-
-                    // Mantener compatibilidad con el catálogo.
                     if (datos.getImages() != null
                             && !datos.getImages().isEmpty()) {
                         producto.setImagen(datos.getImages().get(0));

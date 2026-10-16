@@ -34,7 +34,6 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<Producto> crear(
             @RequestBody Producto producto) {
-
         Producto nuevo = productoService.crear(producto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
@@ -57,7 +56,6 @@ public class ProductoController {
         if (!eliminado) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.noContent().build();
     }
 }
