@@ -10,3 +10,7 @@ Sumé tests con JUnit para probar el funcionamiento de algunas partes del backen
 🎨 Frontend
 Agregué nuevas funcionalidades y mejoras en la interfaz.
 Estuve metiendo algunos cambios para seguir mejorando la experiencia de uso.
+
+
+Datos a tener el cuenta: los test hice un pull request pero no se si se fucionaron o siguen en la otra rama*
+Si Descarga el proyecto tener en cuenta que para entrar al panel crud de los productos necesita tener ROLE_ADMIN*
