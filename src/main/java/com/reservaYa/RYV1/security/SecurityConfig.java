@@ -119,6 +119,27 @@ public class SecurityConfig {
                                 "/api/productos",
                                 "/api/productos/**"
                         ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/categorias",
+                                "/api/categorias/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/categorias/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PATCH,
+                                "/api/categorias/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/categorias",
+                                "/api/categorias/**"
+                        ).hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
