@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
+
+# Configuracion local y credenciales
+src/main/resources/application.properties
+src/main/resources/application-local.properties
+>>>>>>> origin/entrega-sprint2
